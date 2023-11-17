@@ -19,18 +19,26 @@ const server = http.createServer(app)
 // webSocket 서버
 const wss = new WebSocket.Server({ server }) // server 전달
 
-// server.js의 socket은 연결된 브라우저를 뜻한다.
-function handleConnection(socket) {
-	console.log(socket) // 여기 있는 socket이 frontend와 실시간으로 소통할 수 있다.
-}
-
 // connection (on method)
-// : 누군가 우리와 연결했다란 뜻
-// cb의 socket
-// : 연결된 브라우저와의 contact(연락)라인이다.
-// socket을 이용하면 메시지 주고 받기를 할 수 있다.
-// socket은 서버와 브라우저 사이의 연결이다.
-wss.on('connection', handleConnection)
+// connection이 생겼을 때 socket으로 즉시 메시지 보내기
+wss.on('connection', (socket) => {
+  console.log(`Connect to Browser ✅`);
+
+  // 브라우저의 연결이 끊긴 close 이벤트 listen, 콘솔 출력
+  socket.on('close', () => {
+    console.log('Disconnected from the browser ❌')
+  });
+
+  // 메시지 이벤트 listen, 메시지 출력 (frontend -> backend)
+  socket.on('message', message => { // message 콘솔 값, <Buffer 68 65 6c 6c 6f 20 66 72 6f 6d 20 74 68 65 20 62 72 6f 77 73 65 72>
+    const decodedMessage = message.toString('utf-8'); // Buffer 데이터를 문자열로 반환
+    console.log(decodedMessage)
+  });
+
+  // 브라우저에 메시지 보내기
+  socket.send('hello');
+});
+
 
 server.listen(3000, handleListen)
 
