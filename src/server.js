@@ -1,7 +1,6 @@
 // express server + ws server
-// express는 ws를 지원하지 않으므로 function을 추가해야 한다.
 import express from "express"
-import http from "http" // 따로 설치할 필요가 없다. 이미 node.js에 설치되어 있기 때문
+import http from "http" 
 import WebSocket from "ws"
 
 const app = express()
@@ -15,19 +14,23 @@ app.get("/*", (req, res) => res.redirect("/"))
 const handleListen = () => console.log("http://localhost:3000")
 
 // http 서버
-// 서버를 만들려고 하는데 createServer를 하려면 requestListener 경로가 있어야 한다.
-// 이 서버로부터 webSocket을 만들 수 있다.
-const server = http.createServer(app) // Exprss application으로부터 서버를 만든다.
+const server = http.createServer(app) 
 
 // webSocket 서버
 const wss = new WebSocket.Server({ server }) // server 전달
 
-// => 이렇게 하면, http 서버 & webSocket 서버 둘 다 돌릴 수 있다. (2개의 서버가 같은 port에 작동하기를 원하기 때문에)
-// 꼭 이렇게 할 필요는 없다. http 서버가 필요 없다면 webSocket 서버만 만들면 된다.
+// server.js의 socket은 연결된 브라우저를 뜻한다.
+function handleConnection(socket) {
+	console.log(socket) // 여기 있는 socket이 frontend와 실시간으로 소통할 수 있다.
+}
 
-// app.listen처럼 크게 달라진 것은 없어 보이지만 아주 큰 변화다.
-// 이 변화의 요점은 내 http 서버에 access하려는 것이다.
-// 그래서 http 서버 위에 webSocket 서버를 만들 수 있도록 하는 것이다.
-// (views, static files, home, redirection을 원해서 http서버를 만들었다.)
+// connection (on method)
+// : 누군가 우리와 연결했다란 뜻
+// cb의 socket
+// : 연결된 브라우저와의 contact(연락)라인이다.
+// socket을 이용하면 메시지 주고 받기를 할 수 있다.
+// socket은 서버와 브라우저 사이의 연결이다.
+wss.on('connection', handleConnection)
+
 server.listen(3000, handleListen)
 
