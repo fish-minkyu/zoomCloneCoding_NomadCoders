@@ -19,9 +19,18 @@ const server = http.createServer(app)
 // webSocket 서버
 const wss = new WebSocket.Server({ server }) // server 전달
 
+// Fake Database 만들기
+// 누군가 우리 서버에 연결하면 그 connection을 넣을 것이다.
+// 이렇게 하면 받은 메시지를 다른 모든 socket에 전달할 수 있다.
+const sockets = []
+
+
 // connection (on method)
 // connection이 생겼을 때 socket으로 즉시 메시지 보내기
 wss.on('connection', (socket) => {
+  // 서버에 연결된 브라우저를 sockets 배열에 넣어주기
+  sockets.push(socket)
+
   console.log(`Connect to Browser ✅`);
 
   // 브라우저의 연결이 끊긴 close 이벤트 listen, 콘솔 출력
@@ -29,16 +38,14 @@ wss.on('connection', (socket) => {
     console.log('Disconnected from the browser ❌')
   });
 
-  // 메시지 이벤트 listen, 메시지 출력 (frontend -> backend)
-  socket.on('message', message => { // message 콘솔 값, <Buffer 68 65 6c 6c 6f 20 66 72 6f 6d 20 74 68 65 20 62 72 6f 77 73 65 72>
-    const decodedMessage = message.toString('utf-8'); // Buffer 데이터를 문자열로 반환
-    console.log(decodedMessage)
+  socket.on('message', (message) => {
+    sockets.forEach(aSocket => {
+      // Buffer를 문자열로 반환
+      const decodedMessage = message.toString('utf-8')
+      aSocket.send(decodedMessage)
+    })
   });
-
-  // 브라우저에 메시지 보내기
-  socket.send('hello');
 });
 
 
 server.listen(3000, handleListen)
-
