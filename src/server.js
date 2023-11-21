@@ -38,6 +38,8 @@ wss.on('connection', (socket) => {
     console.log('Disconnected from the browser ❌')
   });
 
+  // back-end에서 socket으로 메시지를 전송하고 싶으면
+  // object를 가지고 와서 string으로 만들어줘야 한다.
   socket.on('message', (message) => {
     sockets.forEach(aSocket => {
       // Buffer를 문자열로 반환

@@ -9,10 +9,15 @@ html(lang="en")
   body 
     header 
       h1 Noom
-    main 
+    main
+      //- nickname form
+      form#nick 
+        input(type = 'text', placeholder = 'choose a nickname', required) 
+        button Save
       //- 메시지 리스트가 생길 곳
       ul
-      form
+      //- message form
+      form#message
         input(type = 'text', placeholder = 'write a msg', required)
         button send
     script(src="/public/js/app.js")
