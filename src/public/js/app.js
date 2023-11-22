@@ -1,4 +1,4 @@
-// front
+// app.js (front)
 
 const messageList = document.querySelector('ul')
 const nicknameForm = document.querySelector('#nick')
@@ -34,7 +34,8 @@ function handleNickSubmit(event) {
   // string으로 바뀐 object는 back-end로 전송이 된다.
   // 그리고 back-end에서는 그 string을 다시 object로 바꿔준다.
   
-  socket.send(makeMessage('nickname', input.value)) 
+  socket.send(makeMessage('nickname', input.value))
+  input.value = ''
 };
 
 //? 대화내용 보내기
