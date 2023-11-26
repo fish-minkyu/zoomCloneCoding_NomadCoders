@@ -21,7 +21,16 @@ const io = SocketIO(httpServer)
 
 // frontend-backend SocketIO 연결
 io.on("connection", socket => {
-  console.log(socket)
+  // frontend에서 보낸 메시지 받기, emit과 on의 event 이름은 같아야 된다.
+  // msg는 javascript 객체다.
+  // done은 emit의 3번째 arg, 콜백함수다.(이름은 아무거나 상관없다.)
+  socket.on("enter_room", (msg, done) => {
+    console.log(msg)
+    setTimeout(() => {
+      // frontend 함수를 서버에서 호출
+      done()
+    }, 10000)
+  })
 })
 
 httpServer.listen(3000, handleListen)
