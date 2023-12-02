@@ -24,8 +24,8 @@ io.on("connection", socket => {
   // frontend에서 보낸 메시지 받기, emit과 on의 event 이름은 같아야 된다.
   // msg는 javascript 객체다.
   // done은 emit의 3번째 arg, 콜백함수다.(이름은 아무거나 상관없다.)
-  socket.on("enter_room", (msg, done) => {
-    console.log(msg)
+  socket.on("enter_room", (roomName, done) => {
+    console.log(roomName)
     setTimeout(() => {
       // frontend 함수를 서버에서 호출
       done("hello from the backend")
