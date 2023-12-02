@@ -28,8 +28,8 @@ io.on("connection", socket => {
     console.log(msg)
     setTimeout(() => {
       // frontend 함수를 서버에서 호출
-      done()
-    }, 10000)
+      done("hello from the backend")
+    }, 1000)
   })
 })
 
