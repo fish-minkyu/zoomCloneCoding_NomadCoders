@@ -18,7 +18,7 @@ function showRoom() {
   welcome.hidden = true
   // 채팅 창 나타내기
   room.hidden = false
-  // 방에 입장했다는 걸 참가자들에게 알리기
+  // 방에 입장했다는 걸 사용자에게 알리기
   const h3 = room.querySelector("h3")
   h3.innerText = `Room ${roomName}`
 }
@@ -37,3 +37,16 @@ function handleRoomSubmit(event) {
 }
 
 form.addEventListener("submit", handleRoomSubmit)
+
+// 메시지 함수
+function addMessage(message) {
+  const ul = room.querySelector("ul")
+  const li = document.createElement("li")
+  li.innerText = message
+  ul.appendChild(li)
+}
+
+// 백엔드에서 welcome 이벤트가 일어나면 프론트에서 반응하기
+socket.on("welcome", () => {
+  addMessage("someone joined!")
+})

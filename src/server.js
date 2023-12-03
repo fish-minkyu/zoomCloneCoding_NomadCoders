@@ -29,6 +29,7 @@ io.on("connection", socket => {
     // 방에 들어가기
     socket.join(roomName)
     done()
+    socket.to(roomName).emit("welcome") // welcome 이벤트를 roomName에 있는 모든 사람들에게 emit한다.
   })
 })
 
