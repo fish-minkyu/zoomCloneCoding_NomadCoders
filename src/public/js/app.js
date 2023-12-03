@@ -97,3 +97,21 @@ socket.on("welcome", (user) => {
 socket.on("bye", (user) => {
   addMessage(`${user} left ㅠㅠ`)
 })
+
+// room_change 이벤트가 생기면 console.log
+// socket.on("room_change", (msg) => console.log(msg))와 똑같다.
+socket.on("room_change", (rooms) => {
+  const roomList = welcome.querySelector("ul")
+  // 항상 roomList를 비워주기, 그래야 새로고침할 때 최신화 된 public room 리스트를 받는다.
+  roomList.innerHTML = ""
+  // 어플리케이션에 room이 하나도 없을 때 빈 리스트를 반환한다.
+  if (rooms.length === 0) {    
+    return
+  }
+
+  rooms.forEach(room => {
+    const li = document.createElement("li")
+    li.innerText = room
+    roomList.append(li)
+  })
+})

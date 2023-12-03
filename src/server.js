@@ -52,11 +52,19 @@ io.on("connection", socket => {
     socket.join(roomName)
     done() // 백엔드가 호출하고 프론트에서 실행된다.
     socket.to(roomName).emit("welcome", socket.nickname) // welcome 이벤트를 roomName에 있는 모든 사람들에게 emit한다.
+    // room_change 이벤트가 발생하면 서버 안에 있는 연결된 모든 소켓들에게 메시지를 보낸다.
+    io.sockets.emit("room_change", publicRooms())
   })
 
   // disconnecting 이벤트 수신 시, bye 이벤트 실행
   socket.on("disconnecting", () => {
     socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname))
+  })
+
+  // 유저가 채팅 방을 떠난 후(= disconnect), 작동된다.
+  socket.on("disconnect", () => {
+     // 유저가 방을 나갈 때, 모든 소켓 사용자들에게 알려준다.
+     io.sockets.emit("room_change", publicRooms())
   })
 
   // new_message 이벤트 수신 시 실행
