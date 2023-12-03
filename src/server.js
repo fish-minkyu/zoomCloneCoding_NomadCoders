@@ -21,15 +21,29 @@ const io = SocketIO(httpServer)
 
 // frontend-backend SocketIO 연결
 io.on("connection", socket => {
+  // event를 console.log 하기
   socket.onAny((event) => {
     console.log(`Socket Event: ${event}`) // Socket Event: enter_room
   })
+
   // frontend에서 보낸 메시지 받기, emit과 on의 event 이름은 같아야 된다.
   socket.on("enter_room", (roomName, done) => {
     // 방에 들어가기
     socket.join(roomName)
-    done()
+    done() // 백엔드가 호출하고 프론트에서 실행된다.
     socket.to(roomName).emit("welcome") // welcome 이벤트를 roomName에 있는 모든 사람들에게 emit한다.
+  })
+
+  // disconnecting 이벤트 수신 시, bye 이벤트 실행
+  socket.on("disconnecting", () => {
+    socket.rooms.forEach(room => socket.to(room).emit("bye"))
+  })
+
+  // new_message 이벤트 수신 시 실행
+  socket.on("new_message", (room, msg, done) => {
+    socket.to(room).emit("new_message", msg) // new_message 이벤트명이 같아도 상관없다.
+    // 작업이 완료되면 done함수를 호출
+    done()
   })
 })
 
