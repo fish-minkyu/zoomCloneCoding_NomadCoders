@@ -89,12 +89,16 @@ function addMessage(message) {
 }
 
 // 백엔드에서 welcome 이벤트가 일어나면 프론트에서 반응하기
-socket.on("welcome", (user) => {
+socket.on("welcome", (user, newCount) => {
+  const h3 = room.querySelector("h3")
+  h3.innerText = `Room ${roomName} (${newCount})`
   addMessage(`${user} arrived!!`)
 })
 
 // 유저가 방에 나갈 때
-socket.on("bye", (user) => {
+socket.on("bye", (user, newCount) => {
+  const h3 = room.querySelector("h3")
+  h3.innerText = `Room ${roomName} (${newCount})`
   addMessage(`${user} left ㅠㅠ`)
 })
 

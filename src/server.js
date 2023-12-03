@@ -33,6 +33,11 @@ function publicRooms() {
   return publicRooms
 }
 
+// 같은 방에 유저가 몇명인지 count하기
+function countUser(roomName) {
+  // 가끔 roomName이 아닐 수도 있으니 옵셔널을 준다.
+  return io.sockets.adapter.rooms.get(roomName)?.size
+}
 
 // frontend-backend SocketIO 연결
 io.on("connection", socket => {
@@ -51,16 +56,19 @@ io.on("connection", socket => {
     // 방에 들어가기
     socket.join(roomName)
     done() // 백엔드가 호출하고 프론트에서 실행된다.
-    socket.to(roomName).emit("welcome", socket.nickname) // welcome 이벤트를 roomName에 있는 모든 사람들에게 emit한다.
+    socket.to(roomName).emit("welcome", socket.nickname, countUser(roomName)) // welcome 이벤트를 roomName에 있는 모든 사람들에게 emit한다.
     // room_change 이벤트가 발생하면 서버 안에 있는 연결된 모든 소켓들에게 메시지를 보낸다.
     io.sockets.emit("room_change", publicRooms())
   })
 
   // disconnecting 이벤트 수신 시, bye 이벤트 실행
   socket.on("disconnecting", () => {
-    socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname))
+    // countRoom(room) -1인 이유는 유저가 나가기 직전이므로 해당 유저를 여전히 포함하고 있기 때문이다.
+    socket.rooms.forEach(room => 
+      socket.to(room).emit("bye", socket.nickname,  countUser(room) -1))
   })
 
+  // 채팅 방 퇴장
   // 유저가 채팅 방을 떠난 후(= disconnect), 작동된다.
   socket.on("disconnect", () => {
      // 유저가 방을 나갈 때, 모든 소켓 사용자들에게 알려준다.
