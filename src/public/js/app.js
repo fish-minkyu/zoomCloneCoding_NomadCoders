@@ -38,7 +38,7 @@ function handleMessageSubmit(event) {
 // : 그 이유는 argument와 함께 function을 호출한다.
 socket.on("new_message", addMessage)
 
-// 백엔드로 닉네임 발송
+// 백엔드에 닉네임 발송하기
 function handleNicknameSubmit(event) {
   event.preventDefault()
   const input = room.querySelector("#name input")
