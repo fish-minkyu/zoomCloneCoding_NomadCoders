@@ -17,7 +17,7 @@ let roomName
 // 채팅 메시지 보내는 함수 (발송)
 function handleMessageSubmit(event) {
   event.preventDefault()
-  const input = room.querySelector("input")
+  const input = room.querySelector("#msg input") // #msg form안에 있는 input 가져오기
   // value 변수를 만든 이유
   // : socket.emit()함수를 실행하고 input.value을 비우면 메시지가 사라진다.
   // 그 이유는 socket.emit() 실행할 때 input.value은 이미 없어졌기 때문이다.
@@ -38,6 +38,13 @@ function handleMessageSubmit(event) {
 // : 그 이유는 argument와 함께 function을 호출한다.
 socket.on("new_message", addMessage)
 
+// 백엔드로 닉네임 발송
+function handleNicknameSubmit(event) {
+  event.preventDefault()
+  const input = room.querySelector("#name input")
+  socket.emit("nickname", input.value)
+}
+
 // 방 입장 후, 방 입장 form은 숨기기, 채팅 방 foam은 나타내기
 function showRoom() {
   // 방 입력 숨기기
@@ -48,9 +55,13 @@ function showRoom() {
   const h3 = room.querySelector("h3")
   h3.innerText = `Room ${roomName}`
   // 채팅 방 form 등장
-  const form = room.querySelector("form")
+  const msgForm = room.querySelector("#msg")
+  // 닉네임 form 등장
+  const nameForm = room.querySelector("#name")
   // submit 이벤트를 발생하면 handleMessageSubmit이 실행된다.
-  form.addEventListener("submit", handleMessageSubmit)
+  msgForm.addEventListener("submit", handleMessageSubmit)
+  // submit되면 handleNicknameSubmit이 실행된다.
+  nameForm.addEventListener("submit", handleNicknameSubmit)
 }
 
 // 방 이름 입력 후 입장하기
@@ -78,11 +89,11 @@ function addMessage(message) {
 }
 
 // 백엔드에서 welcome 이벤트가 일어나면 프론트에서 반응하기
-socket.on("welcome", () => {
-  addMessage("someone joined!")
+socket.on("welcome", (user) => {
+  addMessage(`${user} arrived!!`)
 })
 
 // 유저가 방에 나갈 때
-socket.on("bye", () => {
-  addMessage("someone left ㅠㅠ")
+socket.on("bye", (user) => {
+  addMessage(`${user} left ㅠㅠ`)
 })

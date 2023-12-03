@@ -18,8 +18,11 @@ html(lang="en")
       //- 방에 들어가면 메시지 보내기
       div#room
         h3
-        ul 
-        form
+        ul
+         form#name
+          input(placeholder="nickname", required, type="text")
+          button Save
+        form#msg
           input(placeholder="message", required, type="text")
           button Send 
 
