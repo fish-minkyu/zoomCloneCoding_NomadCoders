@@ -1,7 +1,8 @@
 
 import express from "express"
 import http from "http" 
-import SocketIO from "socket.io"
+import { Server } from "socket.io"
+import { instrument } from "@socket.io/admin-ui"
 
 const app = express()
 
@@ -17,7 +18,17 @@ const handleListen = () => console.log("http://localhost:3000")
 const httpServer = http.createServer(app) 
 
 // SocketIO 서버(HTTP 위에 쌓아 올려서 만듬)
-const io = SocketIO(httpServer)
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["https://admin.socket.io"],
+    credentials: true
+  }
+});
+
+instrument(io, {
+  auth: false
+});
+
 
 // public rooms(배열)을 주는 function
 function publicRooms() {
